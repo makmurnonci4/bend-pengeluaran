@@ -36,7 +36,7 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 .sg .kd{grid-column:1/-1;justify-self:center;width:50%}@media (max-width:520px){.sg{grid-template-columns:1fr}.sg .kd{width:100%}}.sg .pn{min-height:40px;margin-top:2px}.sg input{width:100%;margin-top:4px}
 @media print{body{background:#fff!important;color:#000!important}.card{background:#fff!important;color:#000!important;border-color:#bbb!important;break-inside:avoid}
 .nop,.del{display:none!important}.sg canvas{border:0!important}header{background:#fff!important;color:#000!important}.note,h1 small{color:#444!important}}
-.kop{text-align:center;border-bottom:3px double var(--tx);padding-bottom:8px}.kop .a{font-weight:600}.kop .b{font-size:20px;font-weight:700}
+.kop{display:flex;align-items:center;gap:12px;text-align:center;border-bottom:3px double var(--tx);padding-bottom:8px}.ed{border-radius:6px;outline:1px dashed transparent;padding:1px 6px}.ed:hover,.ed:focus{outline-color:var(--pr);background:var(--bg)}@media print{.ed{outline:0!important}}.kt{flex:1;min-width:0}.lg{width:84px;height:84px;flex:none;display:flex;align-items:center;justify-content:center;border:1px dashed var(--bd);border-radius:8px;cursor:pointer;overflow:hidden;font-size:12px;color:var(--mu)}.lg.has{border:0;cursor:default}.lg img{max-width:100%;max-height:100%;object-fit:contain}@media print{.lg:not(.has){visibility:hidden}}@media (max-width:520px){.lg{width:56px;height:56px}.kop .b{font-size:16px}}.kop .a{font-weight:600}.kop .b{font-size:20px;font-weight:700}
 .note{font-size:12px;color:var(--mu)}
 </style>
 </head>
@@ -46,9 +46,9 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 <button class="g nop" id="th">Tema</button>
 </header>
 <main>
-<section class="card"><div class="kop"><div class="a" id="kd1"></div><div class="b" id="kd2"></div><div class="note" id="kd3"></div></div>
-<div class="tools nop" style="margin-top:10px"><input id="k1" value="PEMERINTAH KABUPATEN …………"><input id="k2" value="DINAS …………"><input id="k3" value="Alamat kantor, telepon, email"></div>
-<p class="note nop" style="margin:0">Ubah kop surat di atas; akan tercetak pada laporan.</p></section>
+<section class="card"><div class="kop"><div class="lg" id="lg" title="Klik untuk memasang logo"><img id="li" alt="Logo" hidden><span class="nop" id="lp">＋ Logo</span></div><div class="kt"><div class="a ed" id="kd1" contenteditable="true" spellcheck="false">PEMERINTAH KABUPATEN …………</div><div class="b ed" id="kd2" contenteditable="true" spellcheck="false">DINAS …………</div><div class="note ed" id="kd3" contenteditable="true" spellcheck="false">Alamat kantor, telepon, email</div></div></div>
+<div class="tools nop" style="margin-top:8px"><input type="file" id="lf" accept="image/*" hidden><button class="g" id="lb">🖼 Pasang Logo</button><button class="g" id="lx" hidden>Hapus Logo</button></div>
+<p class="note nop" style="margin:0">✏️ Klik teks kop untuk mengubahnya. Logo (PNG/JPG, sebaiknya persegi) akan tampil di kiri kop dan ikut tercetak.</p></section>
 <section class="grid k" id="kpi"></section>
 
 <section class="grid two">
@@ -136,7 +136,7 @@ q.oninput=fc.onchange=render;
 ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+st.tx.map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi.csv';a.click()};
 th.onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0f141b';r.dataset.theme=dk?'light':'dark'};
 const esc=t=>t.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-function sync(){['1','2','3'].forEach(i=>document.getElementById('kd'+i).textContent=document.getElementById('k'+i).value);[1,2,3].forEach(i=>{const n=document.getElementById('n'+i).value||'(................................)',p=document.getElementById('p'+i).value||'................';document.getElementById('o'+i).innerHTML='<u><b>'+esc(n)+'</b></u><br>NIP. '+esc(p)});
+function sync(){[1,2,3].forEach(i=>{const n=document.getElementById('n'+i).value||'(................................)',p=document.getElementById('p'+i).value||'................';document.getElementById('o'+i).innerHTML='<u><b>'+esc(n)+'</b></u><br>NIP. '+esc(p)});
 const t=document.getElementById('tg').value;document.getElementById('dl').textContent=document.getElementById('kota').value+', '+(t?new Date(t+'T00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'')}
 function sigpad(id){const c=document.getElementById(id),x=c.getContext('2d');x.lineWidth=2;x.lineCap='round';x.strokeStyle='#000';let d=false;
 const pos=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
@@ -144,9 +144,13 @@ c.onpointerdown=e=>{d=true;c.setPointerCapture(e.pointerId);const[a,b]=pos(e);x.
 c.onpointermove=e=>{if(!d)return;const[a,b]=pos(e);x.lineTo(a,b);x.stroke()};
 c.onpointerup=c.onpointercancel=()=>{d=false};
 document.querySelector('[data-c="'+id+'"]').onclick=()=>x.clearRect(0,0,c.width,c.height)}
-sigpad('c1');sigpad('c2');sigpad('c3');['n1','p1','n2','p2','n3','p3','k1','k2','k3','kota','tg'].forEach(i=>document.getElementById(i).oninput=sync);
+sigpad('c1');sigpad('c2');sigpad('c3');['n1','p1','n2','p2','n3','p3','kota','tg'].forEach(i=>document.getElementById(i).oninput=sync);
 document.getElementById('pr').onclick=()=>window.print();
 document.getElementById('tg').value=new Date().toISOString().slice(0,10);sync();
+(()=>{const lg=document.getElementById('lg'),li=document.getElementById('li'),lf=document.getElementById('lf'),lx=document.getElementById('lx'),lp=document.getElementById('lp');
+const set=u=>{li.src=u||'';li.hidden=!u;lp.hidden=!!u;lx.hidden=!u;lg.classList.toggle('has',!!u)};
+lg.onclick=()=>{if(!li.src||li.hidden)lf.click()};document.getElementById('lb').onclick=()=>lf.click();lx.onclick=()=>{set('');lf.value=''};
+lf.onchange=()=>{const f=lf.files[0];if(!f)return;if(f.size>2*1024*1024){alert('Ukuran logo maksimal 2 MB.');return}const r=new FileReader();r.onload=()=>set(r.result);r.readAsDataURL(f)}})();
 fd.value=new Date().toISOString().slice(0,10);render();
 </script>
 </body>
