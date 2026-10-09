@@ -31,15 +31,24 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 .cl{list-style:none;padding:0;margin:0}.cl li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--bd)}
 .cl .d{margin-left:auto;color:var(--mu);font-size:12px;white-space:nowrap}.warn{color:var(--bad)}
 .leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin-top:6px}.leg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+.del{padding:4px 8px;font-size:12px;color:var(--bad)}.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;text-align:center;margin-top:12px}
+.sg canvas{width:100%;max-width:260px;height:90px;background:#fff;border:1px dashed var(--bd);border-radius:8px;touch-action:none;cursor:crosshair}
+.sg .pn{min-height:40px;margin-top:2px}.sg input{width:100%;margin-top:4px}
+@media print{body{background:#fff!important;color:#000!important}.card{background:#fff!important;color:#000!important;border-color:#bbb!important;break-inside:avoid}
+.nop,.del{display:none!important}.sg canvas{border:0!important}header{background:#fff!important;color:#000!important}.note,h1 small{color:#444!important}}
+.kop{text-align:center;border-bottom:3px double var(--tx);padding-bottom:8px}.kop .a{font-weight:600}.kop .b{font-size:20px;font-weight:700}
 .note{font-size:12px;color:var(--mu)}
 </style>
 </head>
 <body>
 <header>
 <h1>Dashboard Bendahara Pengeluaran<small>Dinas ………… • TA 2026 • Posisi: Oktober 2026 (data contoh)</small></h1>
-<button class="g" id="th">Tema</button>
+<button class="g nop" id="th">Tema</button>
 </header>
 <main>
+<section class="card"><div class="kop"><div class="a" id="kd1"></div><div class="b" id="kd2"></div><div class="note" id="kd3"></div></div>
+<div class="tools nop" style="margin-top:10px"><input id="k1" value="PEMERINTAH KABUPATEN …………"><input id="k2" value="DINAS …………"><input id="k3" value="Alamat kantor, telepon, email"></div>
+<p class="note nop" style="margin:0">Ubah kop surat di atas; akan tercetak pada laporan.</p></section>
 <section class="grid k" id="kpi"></section>
 
 <section class="grid two">
@@ -52,7 +61,7 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 <div class="card"><h2>Pengingat & Kewajiban</h2><ul class="cl" id="rem"></ul></div>
 </section>
 
-<section class="card"><h2>Catat Transaksi Belanja</h2>
+<section class="card nop"><h2>Catat Transaksi Belanja</h2>
 <form id="f">
 <input type="date" id="fd" required>
 <input id="fu" placeholder="Uraian belanja" required style="grid-column:span 2">
@@ -66,9 +75,18 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 </section>
 
 <section class="card"><h2>Buku Kas Pembantu / Transaksi</h2>
-<div class="tools"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><button class="g" id="ex">Unduh CSV</button></div>
-<div class="sc"><table><thead><tr><th>Tanggal</th><th>Uraian</th><th>Jenis</th><th>Mekanisme</th><th class="r">Jumlah</th><th class="r">Pajak</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="tools nop"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><button class="g" id="ex">Unduh CSV</button></div>
+<div class="sc"><table><thead><tr><th>Tanggal</th><th>Uraian</th><th>Jenis</th><th>Mekanisme</th><th class="r">Jumlah</th><th class="r">Pajak</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
 </section>
+<section class="card"><h2>Pengesahan</h2>
+<div class="tools nop"><input id="kota" value="…………" placeholder="Kota/Kabupaten"><input type="date" id="tg"><button id="pr">🖨 Cetak Laporan</button></div>
+<p class="note nop">Isi nama & NIP, lalu tanda tangan di kotak (jari/mouse) atau biarkan kosong untuk tanda tangan basah setelah dicetak.</p>
+<div style="text-align:right" id="dl"></div>
+<div class="sg">
+<div><div>Mengetahui,<br><b>Kepala Dinas</b></div><canvas id="c1" width="260" height="90"></canvas><br><button class="g nop" data-c="c1">Hapus ttd</button><input class="nop" id="n1" placeholder="Nama Kepala Dinas"><input class="nop" id="p1" placeholder="NIP Kepala Dinas"><div class="pn" id="o1"></div></div>
+<div><div>&nbsp;<br><b>PPK-SKPD</b></div><canvas id="c3" width="260" height="90"></canvas><br><button class="g nop" data-c="c3">Hapus ttd</button><input class="nop" id="n3" placeholder="Nama PPK-SKPD"><input class="nop" id="p3" placeholder="NIP PPK-SKPD"><div class="pn" id="o3"></div></div>
+<div><div>&nbsp;<br><b>Bendahara Pengeluaran</b></div><canvas id="c2" width="260" height="90"></canvas><br><button class="g nop" data-c="c2">Hapus ttd</button><input class="nop" id="n2" placeholder="Nama Bendahara"><input class="nop" id="p2" placeholder="NIP Bendahara"><div class="pn" id="o2"></div></div>
+</div></section>
 </main>
 <script>
 const M=1e6,bln=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],NOW=9;
@@ -82,6 +100,7 @@ tx:[
 {d:'2026-09-28',u:'Honorarium narasumber',k:'Belanja Barang & Jasa',m:'UP',j:6*M,p:0.02*6*M},
 {d:'2026-09-24',u:'Pengadaan laptop 5 unit',k:'Belanja Modal',m:'LS',j:92*M,p:0.11*92*M},
 {d:'2026-09-18',u:'Jasa kebersihan & keamanan',k:'Belanja Barang & Jasa',m:'LS',j:38*M,p:0.02*38*M}]};
+st.tx.forEach((t,i)=>t.id=i+1);let nid=st.tx.length+1;
 const R=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
 const S=n=>Math.abs(n)>=1e9?(n/1e9).toFixed(2).replace('.',',')+' M':(n/M).toFixed(0).replace(/\B(?=(\d{3})+$)/g,'.')+' jt';
 const pct=(a,b)=>b?a/b*100:0;
@@ -102,17 +121,32 @@ cats.forEach(c=>{const l=c.real/real*C;d+=`<circle cx="70" cy="70" r="${r}" fill
 d+=`</g><text x="70" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="var(--tx)">${p.toFixed(0)}%</text><text x="70" y="84" text-anchor="middle" font-size="10" fill="var(--mu)">serapan</text></svg><div>`+cats.map(c=>`<div style="margin:4px 0"><b style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(${c.c});margin-right:6px"></b>${c.n}<br><span class="note">${S(c.real)} (${pct(c.real,real).toFixed(0)}%)</span></div>`).join('')+'</div>';
 document.getElementById('don').innerHTML=d;
 const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value;
-document.getElementById('tb').innerHTML=st.tx.filter(t=>(!fc||t.k===fc)&&t.u.toLowerCase().includes(q)).sort((a,b)=>b.d.localeCompare(a.d)).map(t=>`<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td></tr>`).join('')||'<tr><td colspan="6" class="note">Tidak ada data.</td></tr>';
+document.getElementById('tb').innerHTML=st.tx.filter(t=>(!fc||t.k===fc)&&t.u.toLowerCase().includes(q)).sort((a,b)=>b.d.localeCompare(a.d)).map(t=>`<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td><td class="r"><button class="g del" onclick="del(${t.id})" title="Hapus transaksi">🗑 Hapus</button></td></tr>`).join('')||'<tr><td colspan="7" class="note">Tidak ada data.</td></tr>';
 }
 document.getElementById('rem').innerHTML=[['Setor PPN/PPh bulan lalu ke kas negara (e-Billing)','10 Okt',1],['Lapor SPT Masa PPh 21/23 & PPN','20 Okt',0],['Susun SPJ UP/GU bulan September','15 Okt',1],['Rekonsiliasi buku kas dengan rekening bank','Akhir bulan',0],['Pertanggungjawaban TU (maks. 1 bulan)','Sesuai SP2D',0],['Laporan realisasi ke PPK-SKPD & BPKAD','5 Okt (lewat)',2]].map(x=>`<li><span>${x[2]==2?'⚠️':x[2]?'🔔':'☑️'}</span><span class="${x[2]==2?'warn':''}">${x[0]}</span><span class="d">${x[1]}</span></li>`).join('');
 f.onsubmit=e=>{e.preventDefault();const j=+fj.value,k=fk.value,m=fm.value,pj=j*(+fp.value),c=cats.find(x=>x.n===k);
 if(m!=='LS'&&j>st.kas){alert('Saldo kas bendahara tidak cukup. Ajukan GU/UP terlebih dahulu.');return}
 if(c.real+j>c.pagu){alert('Melebihi pagu '+k);return}
 c.real+=j;mon[Math.min(new Date(fd.value).getMonth(),11)]+=j;if(m!=='LS')st.kas-=j;st.pajak+=pj;if(m!=='LS')st.spjPending++;
-st.tx.push({d:fd.value,u:fu.value,k,m,j,p:pj});f.reset();fd.value=new Date().toISOString().slice(0,10);render()};
+st.tx.push({id:nid++,d:fd.value,u:fu.value,k,m,j,p:pj});f.reset();fd.value=new Date().toISOString().slice(0,10);render()};
+function del(id){const t=st.tx.find(x=>x.id===id);if(!t||!confirm('Hapus transaksi "'+t.u+'" ('+R(t.j)+')?\nRealisasi, saldo kas, dan pajak akan dikoreksi.'))return;
+const c=cats.find(x=>x.n===t.k);c.real=Math.max(0,c.real-t.j);const mi=Math.min(new Date(t.d).getMonth(),11);mon[mi]=Math.max(0,mon[mi]-t.j);
+if(t.m!=='LS'){st.kas+=t.j;st.spjPending=Math.max(0,st.spjPending-1)}st.pajak=Math.max(0,st.pajak-t.p);st.tx=st.tx.filter(x=>x.id!==id);render()}
 q.oninput=fc.onchange=render;
 ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+st.tx.map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi.csv';a.click()};
 th.onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0f141b';r.dataset.theme=dk?'light':'dark'};
+const esc=t=>t.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+function sync(){['1','2','3'].forEach(i=>document.getElementById('kd'+i).textContent=document.getElementById('k'+i).value);[1,2,3].forEach(i=>{const n=document.getElementById('n'+i).value||'(................................)',p=document.getElementById('p'+i).value||'................';document.getElementById('o'+i).innerHTML='<u><b>'+esc(n)+'</b></u><br>NIP. '+esc(p)});
+const t=document.getElementById('tg').value;document.getElementById('dl').textContent=document.getElementById('kota').value+', '+(t?new Date(t+'T00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'')}
+function sigpad(id){const c=document.getElementById(id),x=c.getContext('2d');x.lineWidth=2;x.lineCap='round';x.strokeStyle='#000';let d=false;
+const pos=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+c.onpointerdown=e=>{d=true;c.setPointerCapture(e.pointerId);const[a,b]=pos(e);x.beginPath();x.moveTo(a,b)};
+c.onpointermove=e=>{if(!d)return;const[a,b]=pos(e);x.lineTo(a,b);x.stroke()};
+c.onpointerup=c.onpointercancel=()=>{d=false};
+document.querySelector('[data-c="'+id+'"]').onclick=()=>x.clearRect(0,0,c.width,c.height)}
+sigpad('c1');sigpad('c2');sigpad('c3');['n1','p1','n2','p2','n3','p3','k1','k2','k3','kota','tg'].forEach(i=>document.getElementById(i).oninput=sync);
+document.getElementById('pr').onclick=()=>window.print();
+document.getElementById('tg').value=new Date().toISOString().slice(0,10);sync();
 fd.value=new Date().toISOString().slice(0,10);render();
 </script>
 </body>
