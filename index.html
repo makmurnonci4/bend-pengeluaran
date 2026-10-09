@@ -31,9 +31,9 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 .cl{list-style:none;padding:0;margin:0}.cl li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--bd)}
 .cl .d{margin-left:auto;color:var(--mu);font-size:12px;white-space:nowrap}.warn{color:var(--bad)}
 .leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin-top:6px}.leg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
-.del{padding:4px 8px;font-size:12px;color:var(--bad)}.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;text-align:center;margin-top:12px}
+.del{padding:4px 8px;font-size:12px;color:var(--bad)}.sg{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center;margin-top:12px}
 .sg canvas{width:100%;max-width:260px;height:90px;background:#fff;border:1px dashed var(--bd);border-radius:8px;touch-action:none;cursor:crosshair}
-.sg .pn{min-height:40px;margin-top:2px}.sg input{width:100%;margin-top:4px}
+.sg .kd{grid-column:1/-1;justify-self:center;width:50%}@media (max-width:520px){.sg{grid-template-columns:1fr}.sg .kd{width:100%}}.sg .pn{min-height:40px;margin-top:2px}.sg input{width:100%;margin-top:4px}
 @media print{body{background:#fff!important;color:#000!important}.card{background:#fff!important;color:#000!important;border-color:#bbb!important;break-inside:avoid}
 .nop,.del{display:none!important}.sg canvas{border:0!important}header{background:#fff!important;color:#000!important}.note,h1 small{color:#444!important}}
 .kop{text-align:center;border-bottom:3px double var(--tx);padding-bottom:8px}.kop .a{font-weight:600}.kop .b{font-size:20px;font-weight:700}
@@ -83,9 +83,9 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 <p class="note nop">Isi nama & NIP, lalu tanda tangan di kotak (jari/mouse) atau biarkan kosong untuk tanda tangan basah setelah dicetak.</p>
 <div style="text-align:right" id="dl"></div>
 <div class="sg">
-<div><div>Mengetahui,<br><b>Kepala Dinas</b></div><canvas id="c1" width="260" height="90"></canvas><br><button class="g nop" data-c="c1">Hapus ttd</button><input class="nop" id="n1" placeholder="Nama Kepala Dinas"><input class="nop" id="p1" placeholder="NIP Kepala Dinas"><div class="pn" id="o1"></div></div>
 <div><div>&nbsp;<br><b>PPK-SKPD</b></div><canvas id="c3" width="260" height="90"></canvas><br><button class="g nop" data-c="c3">Hapus ttd</button><input class="nop" id="n3" placeholder="Nama PPK-SKPD"><input class="nop" id="p3" placeholder="NIP PPK-SKPD"><div class="pn" id="o3"></div></div>
 <div><div>&nbsp;<br><b>Bendahara Pengeluaran</b></div><canvas id="c2" width="260" height="90"></canvas><br><button class="g nop" data-c="c2">Hapus ttd</button><input class="nop" id="n2" placeholder="Nama Bendahara"><input class="nop" id="p2" placeholder="NIP Bendahara"><div class="pn" id="o2"></div></div>
+<div class="kd"><div>Mengetahui,<br><b>Kepala Dinas</b></div><canvas id="c1" width="260" height="90"></canvas><br><button class="g nop" data-c="c1">Hapus ttd</button><input class="nop" id="n1" placeholder="Nama Kepala Dinas"><input class="nop" id="p1" placeholder="NIP Kepala Dinas"><div class="pn" id="o1"></div></div>
 </div></section>
 </main>
 <script>
