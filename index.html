@@ -91,7 +91,7 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 </section>
 
 <section class="card"><h2>Buku Kas Pembantu / Transaksi</h2>
-<div class="tools nop"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><button class="g" id="ex">Unduh CSV</button></div>
+<div class="tools nop"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><select id="fb"><option value="">Semua bulan</option><option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select><button class="g" id="ex">Unduh CSV</button></div>
 <div class="sc"><table><thead><tr><th>Tanggal</th><th>Uraian</th><th>Jenis</th><th>Mekanisme</th><th class="r">Jumlah</th><th class="r">Pajak</th><th></th></tr></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
 </section>
 <section class="card"><h2>Pengesahan</h2>
@@ -130,6 +130,8 @@ function trio(P,Rl,jt){const big=!jt&&P>=1e9,d=big?1e7:M,u=a=>Math.round(a/d),p=
 const f=x=>big?(x/100).toFixed(2).replace('.',',')+' M':x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' jt';return[f(p),f(r),f(s)]}
 function recalc(){cats.forEach(c=>c.real=0);mon.fill(0);
 st.tx.forEach(t=>{const c=cats.find(x=>x.n===t.k);if(!c)return;c.real+=t.j;const i=Math.min(Math.max(+t.d.slice(5,7)-1,0),11);mon[i]+=t.j})}
+function view(){const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value,fb=document.getElementById('fb').value;
+return st.tx.filter(t=>(!fc||t.k===fc)&&(!fb||t.d.slice(5,7)===fb)&&t.u.toLowerCase().includes(q))}
 function render(){
 recalc();
 const pagu=cats.reduce((a,c)=>a+c.pagu,0),real=cats.reduce((a,c)=>a+c.real,0),p=pct(real,pagu),t3=trio(pagu,real);
@@ -148,7 +150,7 @@ cats.forEach(c=>{const l=c.real/real*C;d+=`<circle cx="70" cy="70" r="${r}" fill
 d+=`</g><text x="70" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="var(--tx)">${p.toFixed(0)}%</text><text x="70" y="84" text-anchor="middle" font-size="10" fill="var(--mu)">serapan</text></svg><div>`+cats.map(c=>`<div style="margin:4px 0"><b style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(${c.c});margin-right:6px"></b>${c.n}<br><span class="note">${S(c.real)} (${pct(c.real,real).toFixed(0)}%)</span></div>`).join('')+'</div>';
 document.getElementById('don').innerHTML=d;
 const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value;
-const fl=st.tx.filter(t=>(!fc||t.k===fc)&&t.u.toLowerCase().includes(q));document.getElementById('tf').innerHTML=fl.length?`<tr><td colspan="4">Total ${fc?fc.replace('Belanja ','').toLowerCase():'semua jenis'} (${fl.length} transaksi)</td><td class="r">${R(fl.reduce((a,t)=>a+t.j,0))}</td><td class="r">${R(fl.reduce((a,t)=>a+t.p,0))}</td><td></td></tr>`:'';
+const fl=view(),lb=document.getElementById('fb').selectedOptions[0].text;document.getElementById('tf').innerHTML=fl.length?`<tr><td colspan="4">Total ${fc?fc.replace('Belanja ','').toLowerCase():'semua jenis'} • ${lb} (${fl.length} transaksi)</td><td class="r">${R(fl.reduce((a,t)=>a+t.j,0))}</td><td class="r">${R(fl.reduce((a,t)=>a+t.p,0))}</td><td></td></tr>`:'';
 document.getElementById('tb').innerHTML=fl.sort((a,b)=>b.d.localeCompare(a.d)).map(t=>`<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td><td class="r"><button class="g del" onclick="del(${t.id})" title="Hapus transaksi">🗑 Hapus</button></td></tr>`).join('')||'<tr><td colspan="7" class="note">Tidak ada data.</td></tr>';
 pTot();
 }
@@ -160,8 +162,8 @@ if(m!=='LS')st.kas-=j;st.pajak+=pj;if(m!=='LS')st.spjPending++;
 st.tx.push({id:nid++,d:fd.value,u:fu.value,k,m,j,p:pj});f.reset();fd.value=new Date().toISOString().slice(0,10);render()};
 function del(id){const t=st.tx.find(x=>x.id===id);if(!t||!confirm('Hapus transaksi "'+t.u+'" ('+R(t.j)+')?\nRealisasi, saldo kas, dan pajak akan dikoreksi.'))return;
 if(t.m!=='LS'){st.kas+=t.j;st.spjPending=Math.max(0,st.spjPending-1)}st.pajak=Math.max(0,st.pajak-t.p);st.tx=st.tx.filter(x=>x.id!==id);render()}
-q.oninput=fc.onchange=render;
-ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+st.tx.map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi.csv';a.click()};
+q.oninput=fc.onchange=fb.onchange=render;
+ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+view().map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi'+(fb.value?'-'+fb.value:'')+'.csv';a.click()};
 th.onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0f141b';r.dataset.theme=dk?'light':'dark'};
 const esc=t=>t.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 function sync(){[1,2,3].forEach(i=>{const n=document.getElementById('n'+i).value||'(................................)',p=document.getElementById('p'+i).value||'................';document.getElementById('o'+i).innerHTML='<u><b>'+esc(n)+'</b></u><br>NIP. '+esc(p)});
