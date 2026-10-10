@@ -56,15 +56,20 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 
 <section class="card nop" id="pgcard"><h2>Atur Pagu Anggaran (DPA)</h2>
 <form id="pf">
-<label>Belanja Pegawai (Rp)<input id="pg0" inputmode="numeric" autocomplete="off"></label>
-<label>Belanja Barang & Jasa (Rp)<input id="pg1" inputmode="numeric" autocomplete="off"></label>
-<label>Belanja Modal (Rp)<input id="pg2" inputmode="numeric" autocomplete="off"></label>
+<label>Belanja Pegawai (Rp)<input id="pg0" inputmode="numeric" autocomplete="off"><small class="note" id="pn0"></small></label>
+<label>Belanja Barang & Jasa (Rp)<input id="pg1" inputmode="numeric" autocomplete="off"><small class="note" id="pn1"></small></label>
+<label>Belanja Modal (Rp)<input id="pg2" inputmode="numeric" autocomplete="off"><small class="note" id="pn2"></small></label>
 <label>Status DPA<select id="pks"><option>DPA murni</option><option>Setelah perubahan</option></select></label>
 <label>Target s.d. akhir bulan<select id="pbl"></select></label>
-<button>Terapkan</button><button type="button" class="g" id="prs">Reset contoh</button>
+<button>Terapkan</button><button type="button" class="g" id="prs">Reset pagu</button>
+<details style="grid-column:1/-1"><summary class="note" style="cursor:pointer">Realisasi awal di luar Buku Kas (ubah bila perlu)</summary>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:8px">
+<label>Pegawai (Rp)<input id="pa0" inputmode="numeric" autocomplete="off"></label>
+<label>Barang & Jasa (Rp)<input id="pa1" inputmode="numeric" autocomplete="off"></label>
+<label>Modal (Rp)<input id="pa2" inputmode="numeric" autocomplete="off"></label></div></details>
 </form>
 <p class="note" id="ptot" style="margin:8px 0 0"></p><p class="note" id="pmsg" style="margin:4px 0 0"></p>
-<p class="note" style="margin:4px 0 0">Pagu tiap jenis belanja tidak boleh lebih kecil dari realisasinya. Setelah diterapkan, kartu ringkasan, grafik, serapan, dan batas input transaksi ikut berubah.</p>
+<p class="note" style="margin:4px 0 0">Realisasi = realisasi awal + transaksi di Buku Kas, jadi menambah atau menghapus transaksi langsung mengubah realisasi, sisa, dan serapan. Pagu tidak boleh lebih kecil dari realisasi.</p>
 </section>
 
 <section class="grid two">
@@ -106,8 +111,8 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 </main>
 <script>
 const M=1e6,bln=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];let NOW=10;
-const cats=[{n:'Belanja Pegawai',pagu:6200*M,real:5168*M,c:'--c1'},{n:'Belanja Barang & Jasa',pagu:4800*M,real:2970.2*M,c:'--c2'},{n:'Belanja Modal',pagu:1500*M,real:640*M,c:'--c3'}];
-const mon=[520,790,910,880,960,1100,870,1060,1150,538.2,0,0].map(x=>x*M);
+const cats=[{n:'Belanja Pegawai',pagu:6200*M,awal:4650*M,real:0,c:'--c1'},{n:'Belanja Barang & Jasa',pagu:4800*M,awal:2906*M,real:0,c:'--c2'},{n:'Belanja Modal',pagu:1500*M,awal:548*M,real:0,c:'--c3'}];
+const mon0=[520,790,910,880,960,1100,870,1060,1014,0,0,0].map(x=>x*M),mon=mon0.slice();
 const st={ket:'Setelah perubahan',upLimit:150*M,kas:62*M,pajak:48.5*M,spjPending:3,
 tx:[
 {d:'2026-10-07',u:'Pembelian ATK & cetak',k:'Belanja Barang & Jasa',m:'UP',j:7.8*M,p:0.11*7.8*M},
@@ -122,7 +127,10 @@ const S=n=>Math.abs(n)>=1e9?(n/1e9).toFixed(2).replace('.',',')+' M':(n/M).toFix
 const pct=(a,b)=>b?a/b*100:0;
 function trio(P,Rl,jt){const big=!jt&&P>=1e9,d=big?1e7:M,u=a=>Math.round(a/d),p=u(P),r=u(Rl),s=p-r;
 const f=x=>big?(x/100).toFixed(2).replace('.',',')+' M':x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' jt';return[f(p),f(r),f(s)]}
+function recalc(){cats.forEach(c=>c.real=c.awal);mon0.forEach((v,i)=>mon[i]=v);
+st.tx.forEach(t=>{const c=cats.find(x=>x.n===t.k);if(!c)return;c.real+=t.j;const i=Math.min(Math.max(+t.d.slice(5,7)-1,0),11);mon[i]+=t.j})}
 function render(){
+recalc();
 const pagu=cats.reduce((a,c)=>a+c.pagu,0),real=cats.reduce((a,c)=>a+c.real,0),p=pct(real,pagu),t3=trio(pagu,real);
 const kp=[['Pagu Anggaran (DPA)',t3[0],st.ket,'<button class="g nop" onclick="editPagu()">✏️ Ubah</button>'],['Realisasi',t3[1],p.toFixed(1).replace('.',',')+'% dari pagu'],['Sisa Anggaran',t3[2],'Target s.d. akhir '+bln[NOW-1]+' '+(NOW/12*100).toFixed(0)+'%'],
 ['Saldo Kas Bendahara',S(st.kas),'Batas UP '+S(st.upLimit)],['Pajak Belum Disetor',S(st.pajak),'Setor paling lambat tgl 10'],['SPJ Belum Lengkap',st.spjPending+' dokumen','Perlu verifikasi PPK']];
@@ -140,15 +148,15 @@ d+=`</g><text x="70" y="68" text-anchor="middle" font-size="16" font-weight="700
 document.getElementById('don').innerHTML=d;
 const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value;
 document.getElementById('tb').innerHTML=st.tx.filter(t=>(!fc||t.k===fc)&&t.u.toLowerCase().includes(q)).sort((a,b)=>b.d.localeCompare(a.d)).map(t=>`<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td><td class="r"><button class="g del" onclick="del(${t.id})" title="Hapus transaksi">🗑 Hapus</button></td></tr>`).join('')||'<tr><td colspan="7" class="note">Tidak ada data.</td></tr>';
+pTot();
 }
 document.getElementById('rem').innerHTML=[['Setor PPN/PPh bulan lalu ke kas negara (e-Billing)','10 Okt',1],['Lapor SPT Masa PPh 21/23 & PPN','20 Okt',0],['Susun SPJ UP/GU bulan September','15 Okt',1],['Rekonsiliasi buku kas dengan rekening bank','Akhir bulan',0],['Pertanggungjawaban TU (maks. 1 bulan)','Sesuai SP2D',0],['Laporan realisasi ke PPK-SKPD & BPKAD','5 Okt (lewat)',2]].map(x=>`<li><span>${x[2]==2?'⚠️':x[2]?'🔔':'☑️'}</span><span class="${x[2]==2?'warn':''}">${x[0]}</span><span class="d">${x[1]}</span></li>`).join('');
 f.onsubmit=e=>{e.preventDefault();const j=+fj.value,k=fk.value,m=fm.value,pj=j*(+fp.value),c=cats.find(x=>x.n===k);
 if(m!=='LS'&&j>st.kas){alert('Saldo kas bendahara tidak cukup. Ajukan GU/UP terlebih dahulu.');return}
 if(c.real+j>c.pagu){alert('Melebihi pagu '+k+'. Sisa pagu: '+R(c.pagu-c.real));return}
-c.real+=j;mon[Math.min(new Date(fd.value).getMonth(),11)]+=j;if(m!=='LS')st.kas-=j;st.pajak+=pj;if(m!=='LS')st.spjPending++;
+if(m!=='LS')st.kas-=j;st.pajak+=pj;if(m!=='LS')st.spjPending++;
 st.tx.push({id:nid++,d:fd.value,u:fu.value,k,m,j,p:pj});f.reset();fd.value=new Date().toISOString().slice(0,10);render()};
 function del(id){const t=st.tx.find(x=>x.id===id);if(!t||!confirm('Hapus transaksi "'+t.u+'" ('+R(t.j)+')?\nRealisasi, saldo kas, dan pajak akan dikoreksi.'))return;
-const c=cats.find(x=>x.n===t.k);c.real=Math.max(0,c.real-t.j);const mi=Math.min(new Date(t.d).getMonth(),11);mon[mi]=Math.max(0,mon[mi]-t.j);
 if(t.m!=='LS'){st.kas+=t.j;st.spjPending=Math.max(0,st.spjPending-1)}st.pajak=Math.max(0,st.pajak-t.p);st.tx=st.tx.filter(x=>x.id!==id);render()}
 q.oninput=fc.onchange=render;
 ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+st.tx.map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi.csv';a.click()};
@@ -169,18 +177,20 @@ document.getElementById('tg').value=new Date().toISOString().slice(0,10);sync();
 const set=u=>{li.src=u||'';li.hidden=!u;lp.hidden=!!u;lx.hidden=!u;lg.classList.toggle('has',!!u)};
 lg.onclick=()=>{if(!li.src||li.hidden)lf.click()};document.getElementById('lb').onclick=()=>lf.click();lx.onclick=()=>{set('');lf.value=''};
 lf.onchange=()=>{const f=lf.files[0];if(!f)return;if(f.size>2*1024*1024){alert('Ukuran logo maksimal 2 MB.');return}const r=new FileReader();r.onload=()=>set(r.result);r.readAsDataURL(f)}})();
-const PAGU0=cats.map(c=>c.pagu),NOW0=NOW,KET0=st.ket,BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const PAGU0=cats.map(c=>c.pagu),AWAL0=cats.map(c=>c.awal),NOW0=NOW,KET0=st.ket,BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const $=id=>document.getElementById(id),num=v=>+String(v).replace(/\D/g,'')||0,fmt=n=>n?n.toLocaleString('id-ID'):'';
 $('pbl').innerHTML=BLN.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
-function pTot(){const v=cats.map((c,i)=>num($('pg'+i).value)),t=v.reduce((a,b)=>a+b,0),bad=cats.filter((c,i)=>v[i]<c.real).map(c=>c.n);
-$('ptot').innerHTML='Total pagu: <b>'+R(t)+'</b>'+(bad.length?' • <span class="warn">di bawah realisasi: '+bad.join(', ')+'</span>':'')}
-function fillPagu(){cats.forEach((c,i)=>$('pg'+i).value=fmt(c.pagu));$('pbl').value=NOW;$('pks').value=st.ket;pTot()}
+const rd=()=>({v:cats.map((c,i)=>num($('pg'+i).value)),a:cats.map((c,i)=>num($('pa'+i).value))});
+function pTot(){const {v,a}=rd(),r=cats.map((c,i)=>a[i]+c.real-c.awal),bad=cats.filter((c,i)=>v[i]<r[i]).map(c=>c.n);
+cats.forEach((c,i)=>$('pn'+i).innerHTML='Realisasi '+R(r[i])+' • '+(v[i]>=r[i]?'sisa '+R(v[i]-r[i]):'<span class="warn">kurang '+R(r[i]-v[i])+'</span>'));
+$('ptot').innerHTML='Total pagu: <b>'+R(v.reduce((x,y)=>x+y,0))+'</b>'+(bad.length?' • <span class="warn">di bawah realisasi: '+bad.join(', ')+'</span>':'')}
+function fillPagu(){cats.forEach((c,i)=>{$('pg'+i).value=fmt(c.pagu);$('pa'+i).value=fmt(c.awal)});$('pbl').value=NOW;$('pks').value=st.ket;pTot()}
 function editPagu(){$('pgcard').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('pg0').focus(),350)}
-cats.forEach((c,i)=>$('pg'+i).oninput=e=>{e.target.value=fmt(num(e.target.value));pTot()});
-$('pf').onsubmit=e=>{e.preventDefault();const v=cats.map((c,i)=>num($('pg'+i).value)),b=cats.findIndex((c,i)=>v[i]<c.real),m=$('pmsg');
-if(b>=0){m.className='note warn';m.textContent='Pagu '+cats[b].n+' tidak boleh lebih kecil dari realisasinya ('+R(cats[b].real)+').';return}
-cats.forEach((c,i)=>c.pagu=v[i]);NOW=+$('pbl').value;st.ket=$('pks').value;render();pTot();m.className='note';m.textContent='✔ Pagu diperbarui. Semua angka sudah mengikuti.'};
-$('prs').onclick=()=>{cats.forEach((c,i)=>c.pagu=PAGU0[i]);NOW=NOW0;st.ket=KET0;fillPagu();render();$('pmsg').textContent=''};
+cats.forEach((c,i)=>['pg','pa'].forEach(p=>$(p+i).oninput=e=>{e.target.value=fmt(num(e.target.value));pTot()}));
+$('pf').onsubmit=e=>{e.preventDefault();const {v,a}=rd(),m=$('pmsg'),b=cats.findIndex((c,i)=>v[i]<a[i]+c.real-c.awal);
+if(b>=0){m.className='note warn';m.textContent='Pagu '+cats[b].n+' tidak boleh lebih kecil dari realisasinya ('+R(a[b]+cats[b].real-cats[b].awal)+').';return}
+cats.forEach((c,i)=>{c.pagu=v[i];c.awal=a[i]});NOW=+$('pbl').value;st.ket=$('pks').value;render();m.className='note';m.textContent='✔ Pagu diperbarui. Semua angka sudah mengikuti.'};
+$('prs').onclick=()=>{cats.forEach((c,i)=>{c.pagu=PAGU0[i];c.awal=AWAL0[i]});NOW=NOW0;st.ket=KET0;render();fillPagu();$('pmsg').textContent=''};
 fillPagu();
 fd.value=new Date().toISOString().slice(0,10);render();
 </script>
