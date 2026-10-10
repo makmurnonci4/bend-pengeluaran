@@ -21,7 +21,7 @@ main{padding:16px 20px;max-width:1200px;margin:auto;display:grid;gap:14px}
 .kpi .l{color:var(--mu);font-size:12px}.kpi .v{font-size:20px;font-weight:700;margin:2px 0}.kpi .s{font-size:12px;color:var(--mu)}
 .bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pr)}
 .row{margin-bottom:12px}.row .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
-.sc{overflow:auto;max-height:460px}.sc thead th{position:sticky;top:0;background:var(--card)}tfoot td{font-weight:700;border-top:2px solid var(--bd);border-bottom:0}@media print{.sc{max-height:none!important;overflow:visible!important}}table{width:100%;border-collapse:collapse;min-width:620px}
+.sc{overflow:auto;max-height:460px}.sc thead th{position:sticky;top:0;background:var(--card)}tfoot td{font-weight:700;border-top:2px solid var(--bd);border-bottom:0}@media print{.sc{max-height:none!important;overflow:visible!important}}table{width:100%;border-collapse:collapse;min-width:820px}
 th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd);font-size:13px}th{color:var(--mu);font-weight:600}td.r,th.r{text-align:right}
 .tag{padding:2px 8px;border-radius:10px;font-size:11px;background:var(--bd)}
 input,select,button{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:7px 9px;min-width:0}
@@ -38,8 +38,10 @@ form{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8
 .nop,.del{display:none!important}.sg canvas{border:0!important}header{background:#fff!important;color:#000!important}.note,h1 small{color:#444!important}}
 .kop{display:flex;align-items:center;gap:12px;text-align:center;border-bottom:3px double var(--tx);padding-bottom:8px}.ed{border-radius:6px;outline:1px dashed transparent;padding:1px 6px}.ed:hover,.ed:focus{outline-color:var(--pr);background:var(--bg)}@media print{.ed{outline:0!important}}.kt{flex:1;min-width:0}.lg{width:84px;height:84px;flex:none;display:flex;align-items:center;justify-content:center;border:1px dashed var(--bd);border-radius:8px;cursor:pointer;overflow:hidden;font-size:12px;color:var(--mu)}.lg.has{border:0;cursor:default}.lg img{max-width:100%;max-height:100%;object-fit:contain}@media print{.lg:not(.has){visibility:hidden}}@media (max-width:520px){.lg{width:56px;height:56px}.kop .b{font-size:16px}}.kop .a{font-weight:600}.kop .b{font-size:20px;font-weight:700}
 .note{font-size:12px;color:var(--mu)}
+.ck{display:flex;gap:4px;align-items:center;font-size:12px;white-space:nowrap;color:var(--tx)}.ck input{width:auto;padding:0;margin:0}.kpi .v.neg{color:var(--bad)}
 label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label select{width:100%;font-size:14px}
 .kpi .l{display:flex;justify-content:space-between;align-items:center;gap:6px}.kpi .l button{padding:1px 8px;font-size:11px;white-space:nowrap}
+#pf input.bad{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}.callout{border:1px solid var(--bad);color:var(--bad);border-radius:8px;padding:8px 10px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.callout button{padding:4px 10px;font-size:12px}
 #pf{align-items:end}#pf input{text-align:right}
 </style>
 </head>
@@ -54,17 +56,18 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 <p class="note nop" style="margin:0">✏️ Klik teks kop untuk mengubahnya. Logo (PNG/JPG, sebaiknya persegi) akan tampil di kiri kop dan ikut tercetak.</p></section>
 <section class="grid k" id="kpi"></section>
 
-<section class="card nop" id="pgcard"><h2>Atur Pagu Anggaran (DPA)</h2>
+<section class="card nop" id="pgcard"><h2>Atur Anggaran & Kas</h2>
 <form id="pf">
 <label>Belanja Pegawai (Rp)<input id="pg0" inputmode="numeric" autocomplete="off"><small class="note" id="pn0"></small></label>
 <label>Belanja Barang & Jasa (Rp)<input id="pg1" inputmode="numeric" autocomplete="off"><small class="note" id="pn1"></small></label>
 <label>Belanja Modal (Rp)<input id="pg2" inputmode="numeric" autocomplete="off"><small class="note" id="pn2"></small></label>
+<label>Uang Persediaan / batas kas (Rp)<input id="pup" inputmode="numeric" autocomplete="off"><small class="note" id="pnu"></small></label>
 <label>Status DPA<select id="pks"><option>DPA murni</option><option>Setelah perubahan</option></select></label>
 <label>Target s.d. akhir bulan<select id="pbl"></select></label>
 <button>Terapkan</button><button type="button" class="g" id="prs">Reset pagu</button>
 </form>
 <p class="note" id="ptot" style="margin:8px 0 0"></p><p class="note" id="pmsg" style="margin:4px 0 0"></p>
-<p class="note" style="margin:4px 0 0">Realisasi = jumlah transaksi di Buku Kas (tabel di bawah), jadi menambah atau menghapus transaksi langsung mengubah realisasi, sisa, dan serapan. Pagu tidak boleh lebih kecil dari realisasi.</p>
+<p class="note" style="margin:4px 0 0">Semua angka dihitung dari Buku Kas (tabel di bawah): realisasi = jumlah transaksi; saldo kas = UP − belanja UP/GU/TU yang SPJ-nya belum lengkap; pajak belum disetor dan SPJ belum lengkap mengikuti centang di tabel. Pagu boleh diubah ke angka berapa pun; bila di bawah realisasi, sisanya negatif dan ditandai merah.</p>
 </section>
 
 <section class="grid two">
@@ -77,7 +80,7 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 <div class="card"><h2>Pengingat & Kewajiban</h2><ul class="cl" id="rem"></ul></div>
 </section>
 
-<section class="card nop"><h2>Catat Transaksi Belanja</h2>
+<section class="card nop" id="fcard"><h2 id="fh">Catat Transaksi Belanja</h2>
 <form id="f">
 <input type="date" id="fd" required>
 <input id="fu" placeholder="Uraian belanja" required style="grid-column:span 2">
@@ -85,14 +88,14 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 <select id="fm"><option>UP</option><option>GU</option><option>TU</option><option>LS</option></select>
 <input type="number" id="fj" min="1" placeholder="Jumlah (Rp)" required>
 <select id="fp"><option value="0">Tanpa pajak</option><option value="0.11">PPN 11%</option><option value="0.015">PPh 22 (1,5%)</option><option value="0.02">PPh 23 (2%)</option></select>
-<button>Simpan</button>
+<button id="fsv">Simpan</button><button type="button" class="g" id="fcn" hidden>Batal ubah</button>
 </form>
-<p class="note">UP/GU/TU mengurangi saldo kas bendahara; LS dibayar langsung ke rekening penerima. Pajak yang dipungut masuk ke "pajak belum disetor".</p>
+<p class="note">UP/GU/TU memakai kas bendahara sampai SPJ-nya dicentang lengkap; LS dibayar langsung ke rekening penerima. Pajak yang dipungut masuk ke "pajak belum disetor" sampai dicentang disetor. Gunakan tombol Ubah di tabel untuk mengoreksi transaksi.</p>
 </section>
 
-<section class="card"><h2>Buku Kas Pembantu / Transaksi</h2>
-<div class="tools nop"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><select id="fb"><option value="">Semua bulan</option><option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select><button class="g" id="ex">Unduh CSV</button></div>
-<div class="sc"><table><thead><tr><th>Tanggal</th><th>Uraian</th><th>Jenis</th><th>Mekanisme</th><th class="r">Jumlah</th><th class="r">Pajak</th><th></th></tr></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
+<section class="card" id="bk"><h2>Buku Kas Pembantu / Transaksi</h2>
+<div class="tools nop"><input id="q" placeholder="Cari uraian…"><select id="fc"><option value="">Semua jenis</option><option>Belanja Pegawai</option><option>Belanja Barang & Jasa</option><option>Belanja Modal</option></select><select id="fb"><option value="">Semua bulan</option><option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select><select id="fs"><option value="">Semua status</option><option value="spj">SPJ belum lengkap</option><option value="pjk">Pajak belum disetor</option></select><button class="g" id="ex">Unduh CSV</button></div>
+<div class="sc"><table><thead><tr><th>Tanggal</th><th>Uraian</th><th>Jenis</th><th>Mekanisme</th><th class="r">Jumlah</th><th class="r">Pajak</th><th>Status</th><th></th></tr></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
 </section>
 <section class="card"><h2>Pengesahan</h2>
 <div class="tools nop"><input id="kota" value="…………" placeholder="Kota/Kabupaten"><input type="date" id="tg"><button id="pr">🖨 Cetak Laporan</button></div>
@@ -105,22 +108,23 @@ label{display:grid;gap:4px;font-size:12px;color:var(--mu)}label input,label sele
 </div></section>
 </main>
 <script>
+const $=id=>document.getElementById(id);
 const M=1e6,bln=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];let NOW=10;
 const cats=[{n:'Belanja Pegawai',pagu:6200*M,real:0,c:'--c1'},{n:'Belanja Barang & Jasa',pagu:4800*M,real:0,c:'--c2'},{n:'Belanja Modal',pagu:1500*M,real:0,c:'--c3'}];
 const mon=Array(12).fill(0);
-const st={ket:'Setelah perubahan',upLimit:150*M,kas:62*M,pajak:48.5*M,spjPending:3,
+const st={ket:'Setelah perubahan',up:150*M,kas:0,pajak:0,spjPending:0,
 tx:[
-{d:'2026-10-07',u:'Pembelian ATK & cetak',k:'Belanja Barang & Jasa',m:'UP',j:7.8*M,p:0.11*7.8*M},
-{d:'2026-10-05',u:'Perjalanan dinas koordinasi provinsi',k:'Belanja Barang & Jasa',m:'GU',j:12.4*M,p:0},
-{d:'2026-10-02',u:'Gaji & tunjangan ASN Oktober',k:'Belanja Pegawai',m:'LS',j:518*M,p:0},
-{d:'2026-09-28',u:'Honorarium narasumber',k:'Belanja Barang & Jasa',m:'UP',j:6*M,p:0.02*6*M},
-{d:'2026-09-24',u:'Pengadaan laptop 5 unit',k:'Belanja Modal',m:'LS',j:92*M,p:0.11*92*M},
-{d:'2026-09-18',u:'Jasa kebersihan & keamanan',k:'Belanja Barang & Jasa',m:'LS',j:38*M,p:0.02*38*M}]};
+{d:'2026-10-07',u:'Pembelian ATK & cetak',k:'Belanja Barang & Jasa',m:'UP',j:7.8*M,p:0.11*7.8*M,spj:false,tor:false},
+{d:'2026-10-05',u:'Perjalanan dinas koordinasi provinsi',k:'Belanja Barang & Jasa',m:'GU',j:12.4*M,p:0,spj:false,tor:false},
+{d:'2026-10-02',u:'Gaji & tunjangan ASN Oktober',k:'Belanja Pegawai',m:'LS',j:518*M,p:0,spj:true,tor:false},
+{d:'2026-09-28',u:'Honorarium narasumber',k:'Belanja Barang & Jasa',m:'UP',j:6*M,p:0.02*6*M,spj:false,tor:true},
+{d:'2026-09-24',u:'Pengadaan laptop 5 unit',k:'Belanja Modal',m:'LS',j:92*M,p:0.11*92*M,spj:true,tor:false},
+{d:'2026-09-18',u:'Jasa kebersihan & keamanan',k:'Belanja Barang & Jasa',m:'LS',j:38*M,p:0.02*38*M,spj:true,tor:true}]};
 (()=>{const mn=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September'],ed=i=>'2026-'+String(i+1).padStart(2,'0')+'-'+new Date(2026,i+1,0).getDate(),seed=[];
 const gj=[515,516,516,517,517,517,518,517,517],bj=[5,274,274,363,443,383,352,315,497],md={2:120,5:200,7:228};
-mn.forEach((b,i)=>{seed.push({d:ed(i),u:'Gaji & tunjangan ASN '+b,k:'Belanja Pegawai',m:'LS',j:gj[i]*M,p:0});
-seed.push({d:ed(i),u:'Belanja barang & jasa '+b+' (rekap)',k:'Belanja Barang & Jasa',m:'GU',j:bj[i]*M,p:0});
-if(md[i])seed.push({d:ed(i),u:'Belanja modal '+b+' (rekap)',k:'Belanja Modal',m:'LS',j:md[i]*M,p:0})});
+mn.forEach((b,i)=>{seed.push({d:ed(i),u:'Gaji & tunjangan ASN '+b,k:'Belanja Pegawai',m:'LS',j:gj[i]*M,p:0,spj:true,tor:true});
+seed.push({d:ed(i),u:'Belanja barang & jasa '+b+' (rekap)',k:'Belanja Barang & Jasa',m:'GU',j:bj[i]*M,p:0,spj:true,tor:true});
+if(md[i])seed.push({d:ed(i),u:'Belanja modal '+b+' (rekap)',k:'Belanja Modal',m:'LS',j:md[i]*M,p:0,spj:true,tor:true})});
 st.tx=seed.concat(st.tx)})();
 st.tx.forEach((t,i)=>t.id=i+1);let nid=st.tx.length+1;
 const R=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
@@ -128,42 +132,62 @@ const S=n=>Math.abs(n)>=1e9?(n/1e9).toFixed(2).replace('.',',')+' M':(n/M).toFix
 const pct=(a,b)=>b?a/b*100:0;
 function trio(P,Rl,jt){const big=!jt&&P>=1e9,d=big?1e7:M,u=a=>Math.round(a/d),p=u(P),r=u(Rl),s=p-r;
 const f=x=>big?(x/100).toFixed(2).replace('.',',')+' M':x.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' jt';return[f(p),f(r),f(s)]}
-function recalc(){cats.forEach(c=>c.real=0);mon.fill(0);
+const kasOf=l=>st.up-l.reduce((a,t)=>a+(t.m!=='LS'&&!t.spj?t.j:0),0),pajakOf=l=>l.reduce((a,t)=>a+(t.p&&!t.tor?t.p:0),0),spjOf=l=>l.filter(t=>t.m!=='LS'&&!t.spj).length;
+function recalc(){cats.forEach(c=>c.real=0);mon.fill(0);st.kas=kasOf(st.tx);st.pajak=pajakOf(st.tx);st.spjPending=spjOf(st.tx);
 st.tx.forEach(t=>{const c=cats.find(x=>x.n===t.k);if(!c)return;c.real+=t.j;const i=Math.min(Math.max(+t.d.slice(5,7)-1,0),11);mon[i]+=t.j})}
-function view(){const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value,fb=document.getElementById('fb').value;
-return st.tx.filter(t=>(!fc||t.k===fc)&&(!fb||t.d.slice(5,7)===fb)&&t.u.toLowerCase().includes(q))}
+function view(){const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value,fb=document.getElementById('fb').value,fz=document.getElementById('fs').value;
+return st.tx.filter(t=>(!fc||t.k===fc)&&(!fb||t.d.slice(5,7)===fb)&&(!fz||(fz==='spj'?(t.m!=='LS'&&!t.spj):(t.p>0&&!t.tor)))&&t.u.toLowerCase().includes(q))}
 function render(){
 recalc();
-const pagu=cats.reduce((a,c)=>a+c.pagu,0),real=cats.reduce((a,c)=>a+c.real,0),p=pct(real,pagu),t3=trio(pagu,real);
-const kp=[['Pagu Anggaran (DPA)',t3[0],st.ket,'<button class="g nop" onclick="editPagu()">✏️ Ubah</button>'],['Realisasi',t3[1],p.toFixed(1).replace('.',',')+'% dari pagu'],['Sisa Anggaran',t3[2],'Target s.d. akhir '+bln[NOW-1]+' '+(NOW/12*100).toFixed(0)+'%'],
-['Saldo Kas Bendahara',S(st.kas),'Batas UP '+S(st.upLimit)],['Pajak Belum Disetor',S(st.pajak),'Setor paling lambat tgl 10'],['SPJ Belum Lengkap',st.spjPending+' dokumen','Perlu verifikasi PPK']];
-kpi.innerHTML=kp.map(x=>`<div class="card kpi"><div class="l"><span>${x[0]}</span>${x[3]||''}</div><div class="v">${x[1]}</div><div class="s">${x[2]}</div></div>`).join('');
+const pagu=cats.reduce((a,c)=>a+c.pagu,0),real=cats.reduce((a,c)=>a+c.real,0),p=pct(real,pagu),t3=trio(pagu,real),bt=(f,l)=>`<button class="g nop" onclick="${f}">${l}</button>`;
+const kp=[['Pagu Anggaran (DPA)',t3[0],st.ket,bt('editPagu()','✏️ Ubah')],
+['Realisasi',t3[1],p.toFixed(1).replace('.',',')+'% dari pagu',bt("goKas('')",'Buku Kas')],
+['Sisa Anggaran',t3[2],real>pagu?'Realisasi melebihi pagu':'Target s.d. akhir '+bln[NOW-1]+' '+(NOW/12*100).toFixed(0)+'%','',real>pagu?'neg':''],
+['Saldo Kas Bendahara',S(st.kas),st.kas<0?'Melebihi UP '+S(st.up):'dari UP '+S(st.up),bt('editUP()','✏️ Ubah'),st.kas<0?'neg':''],
+['Pajak Belum Disetor',S(st.pajak),'Setor paling lambat tgl 10',bt("goKas('pjk')",'Lihat')],
+['SPJ Belum Lengkap',st.spjPending+' dokumen','Perlu verifikasi PPK',bt("goKas('spj')",'Lihat')]];
+kpi.innerHTML=kp.map(x=>`<div class="card kpi"><div class="l"><span>${x[0]}</span>${x[3]||''}</div><div class="v ${x[4]||''}">${x[1]}</div><div class="s">${x[2]}</div></div>`).join('');
 // bar chart
 const W=520,H=210,pl=34,bw=(W-pl)/12;let cum=0,mx=Math.max(...mon.map(x=>x/M),pagu/12/M)*1.15,s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Grafik realisasi bulanan">`;
 for(let i=0;i<=4;i++){const y=10+(H-40)*i/4;s+=`<line x1="${pl}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--bd)"/><text x="0" y="${y+4}" font-size="10" fill="var(--mu)">${Math.round(mx*(4-i)/4)}</text>`}
 mon.forEach((v,i)=>{const h=(H-40)*v/M/mx,x=pl+i*bw+6;s+=`<rect x="${x}" y="${H-30-h}" width="${bw-12}" height="${h}" rx="3" fill="var(--c1)"/><text x="${x+(bw-12)/2}" y="${H-14}" font-size="10" text-anchor="middle" fill="var(--mu)">${bln[i]}</text>`});
 const ty=H-30-(H-40)*(pagu/12/M)/mx;s+=`<line x1="${pl}" x2="${W}" y1="${ty}" y2="${ty}" stroke="var(--c2)" stroke-width="2" stroke-dasharray="5 4"/></svg>`;mon.innerHTML?0:0;document.getElementById('mon').innerHTML=s;
-document.getElementById('cat').innerHTML=cats.map(c=>{const x=pct(c.real,c.pagu),t=trio(c.pagu,c.real,1);return `<div class="row"><div class="t"><span>${c.n}</span><b>${x.toFixed(1).replace('.',',')}%</b></div><div class="bar"><i style="width:${x}%;background:var(${c.c})"></i></div><div class="note">${t[1]} dari ${t[0]} • sisa ${t[2]}</div></div>`}).join('');
+document.getElementById('cat').innerHTML=cats.map(c=>{const x=pct(c.real,c.pagu),t=trio(c.pagu,c.real,1);return `<div class="row"><div class="t"><span>${c.n}</span><b>${x.toFixed(1).replace('.',',')}%</b></div><div class="bar"><i style="width:${Math.min(x,100)}%;background:var(${c.c})"></i></div><div class="note ${c.real>c.pagu?'warn':''}">${t[1]} dari ${t[0]} • ${c.real>c.pagu?'terlampaui '+t[2].replace('-',''):'sisa '+t[2]}</div></div>`}).join('');
 // donut
 let off=0,r=52,C=2*Math.PI*r,d=`<svg viewBox="0 0 140 140" width="150"><g transform="rotate(-90 70 70)">`;
 cats.forEach(c=>{const l=c.real/real*C;d+=`<circle cx="70" cy="70" r="${r}" fill="none" stroke="var(${c.c})" stroke-width="20" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}"/>`;off+=l});
 d+=`</g><text x="70" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="var(--tx)">${p.toFixed(0)}%</text><text x="70" y="84" text-anchor="middle" font-size="10" fill="var(--mu)">serapan</text></svg><div>`+cats.map(c=>`<div style="margin:4px 0"><b style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(${c.c});margin-right:6px"></b>${c.n}<br><span class="note">${S(c.real)} (${pct(c.real,real).toFixed(0)}%)</span></div>`).join('')+'</div>';
 document.getElementById('don').innerHTML=d;
-const q=document.getElementById('q').value.toLowerCase(),fc=document.getElementById('fc').value;
-const fl=view(),lb=document.getElementById('fb').selectedOptions[0].text;document.getElementById('tf').innerHTML=fl.length?`<tr><td colspan="4">Total ${fc?fc.replace('Belanja ','').toLowerCase():'semua jenis'} • ${lb} (${fl.length} transaksi)</td><td class="r">${R(fl.reduce((a,t)=>a+t.j,0))}</td><td class="r">${R(fl.reduce((a,t)=>a+t.p,0))}</td><td></td></tr>`:'';
-document.getElementById('tb').innerHTML=fl.sort((a,b)=>b.d.localeCompare(a.d)).map(t=>`<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td><td class="r"><button class="g del" onclick="del(${t.id})" title="Hapus transaksi">🗑 Hapus</button></td></tr>`).join('')||'<tr><td colspan="7" class="note">Tidak ada data.</td></tr>';
+const fc=$('fc').value,fz=$('fs'),lb=$('fb').selectedOptions[0].text,fl=view();
+$('tf').innerHTML=fl.length?`<tr><td colspan="4">Total ${fc?fc.replace('Belanja ','').toLowerCase():'semua jenis'} • ${lb}${fz.value?' • '+fz.selectedOptions[0].text:''} (${fl.length} transaksi)</td><td class="r">${R(fl.reduce((a,t)=>a+t.j,0))}</td><td class="r">${R(fl.reduce((a,t)=>a+t.p,0))}</td><td colspan="2"></td></tr>`:'';
+$('tb').innerHTML=fl.sort((a,b)=>b.d.localeCompare(a.d)).map(t=>{const sx=[];
+if(t.m!=='LS')sx.push(`<label class="ck" title="SPJ lengkap = sudah dipertanggungjawabkan dan diganti (GU), saldo kas kembali"><input type="checkbox" ${t.spj?'checked':''} onchange="setFlag(${t.id},'spj',this.checked)">SPJ lengkap</label>`);
+if(t.p)sx.push(`<label class="ck" title="Centang bila pajak sudah disetor ke kas negara"><input type="checkbox" ${t.tor?'checked':''} onchange="setFlag(${t.id},'tor',this.checked)">Pajak disetor</label>`);
+return `<tr><td>${t.d}</td><td>${t.u.replace(/</g,'&lt;')}</td><td><span class="tag">${t.k.replace('Belanja ','')}</span></td><td>${t.m}</td><td class="r">${R(t.j)}</td><td class="r">${t.p?R(t.p):'-'}</td><td>${sx.join('')||'-'}</td><td class="r" style="white-space:nowrap"><button class="g del" style="color:var(--tx)" onclick="editTx(${t.id})" title="Ubah transaksi">✏️ Ubah</button> <button class="g del" onclick="del(${t.id})" title="Hapus transaksi">🗑 Hapus</button></td></tr>`}).join('')||'<tr><td colspan="8" class="note">Tidak ada data.</td></tr>';
 pTot();
 }
 document.getElementById('rem').innerHTML=[['Setor PPN/PPh bulan lalu ke kas negara (e-Billing)','10 Okt',1],['Lapor SPT Masa PPh 21/23 & PPN','20 Okt',0],['Susun SPJ UP/GU bulan September','15 Okt',1],['Rekonsiliasi buku kas dengan rekening bank','Akhir bulan',0],['Pertanggungjawaban TU (maks. 1 bulan)','Sesuai SP2D',0],['Laporan realisasi ke PPK-SKPD & BPKAD','5 Okt (lewat)',2]].map(x=>`<li><span>${x[2]==2?'⚠️':x[2]?'🔔':'☑️'}</span><span class="${x[2]==2?'warn':''}">${x[0]}</span><span class="d">${x[1]}</span></li>`).join('');
-f.onsubmit=e=>{e.preventDefault();const j=+fj.value,k=fk.value,m=fm.value,pj=j*(+fp.value),c=cats.find(x=>x.n===k);
-if(m!=='LS'&&j>st.kas){alert('Saldo kas bendahara tidak cukup. Ajukan GU/UP terlebih dahulu.');return}
-if(c.real+j>c.pagu){alert('Melebihi pagu '+k+'. Sisa pagu: '+R(c.pagu-c.real));return}
-if(m!=='LS')st.kas-=j;st.pajak+=pj;if(m!=='LS')st.spjPending++;
-st.tx.push({id:nid++,d:fd.value,u:fu.value,k,m,j,p:pj});f.reset();fd.value=new Date().toISOString().slice(0,10);render()};
-function del(id){const t=st.tx.find(x=>x.id===id);if(!t||!confirm('Hapus transaksi "'+t.u+'" ('+R(t.j)+')?\nRealisasi, saldo kas, dan pajak akan dikoreksi.'))return;
-if(t.m!=='LS'){st.kas+=t.j;st.spjPending=Math.max(0,st.spjPending-1)}st.pajak=Math.max(0,st.pajak-t.p);st.tx=st.tx.filter(x=>x.id!==id);render()}
-q.oninput=fc.onchange=fb.onchange=render;
-ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak\n'+view().map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p)].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(c);a.download='transaksi'+(fb.value?'-'+fb.value:'')+'.csv';a.click()};
+let editId=null;
+function resetForm(){editId=null;f.reset();[...fp.querySelectorAll('[data-c]')].forEach(o=>o.remove());fd.value=new Date().toISOString().slice(0,10);fsv.textContent='Simpan';fcn.hidden=true;fh.textContent='Catat Transaksi Belanja'}
+f.onsubmit=e=>{e.preventDefault();const j=+fj.value,k=fk.value,m=fm.value,pj=j*(+fp.value),c=cats.find(x=>x.n===k),old=editId?st.tx.find(x=>x.id===editId):null,rest=old?st.tx.filter(x=>x!==old):st.tx;
+const nt={id:old?old.id:nid,d:fd.value,u:fu.value,k,m,j,p:pj,spj:m==='LS'?true:(old&&old.m!=='LS'?old.spj:false),tor:old?!!old.tor:false};
+const kb=kasOf(st.tx),ka=kasOf(rest.concat(nt));
+if(m!=='LS'&&ka<0&&ka<kb){alert('Saldo kas bendahara tidak cukup ('+R(kb)+'). Ajukan GU/UP terlebih dahulu, atau centang SPJ lengkap pada belanja sebelumnya.');return}
+const nr=rest.filter(x=>x.k===k).reduce((a,x)=>a+x.j,0)+j;
+if(nr>c.pagu&&nr>c.real){const sp=c.pagu-(nr-j);alert('Melebihi pagu '+k+(sp>=0?'. Sisa pagu: '+R(sp):'. Realisasi sudah melebihi pagu sebesar '+R(-sp)+'. Naikkan pagu terlebih dahulu.'));return}
+if(old)Object.assign(old,nt);else{nid++;st.tx.push(nt)}
+resetForm();render()};
+function editTx(id){const t=st.tx.find(x=>x.id===id);if(!t)return;editId=id;fd.value=t.d;fu.value=t.u;fk.value=t.k;fm.value=t.m;fj.value=Math.round(t.j);
+const r=t.j?t.p/t.j:0;[...fp.querySelectorAll('[data-c]')].forEach(o=>o.remove());
+let o=[...fp.options].find(x=>Math.abs(+x.value-r)<1e-6);if(!o){o=new Option('Pajak '+(r*100).toFixed(2).replace('.',',')+'%',r);o.dataset.c=1;fp.add(o)}fp.value=o.value;
+fsv.textContent='Simpan perubahan';fcn.hidden=false;fh.textContent='Ubah Transaksi';fcard.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>fu.focus(),350)}
+fcn.onclick=resetForm;
+function setFlag(id,key,v){const t=st.tx.find(x=>x.id===id);if(t){t[key]=v;render()}}
+function del(id){const t=st.tx.find(x=>x.id===id);if(!t||!confirm('Hapus transaksi "'+t.u+'" ('+R(t.j)+')?\nRealisasi, saldo kas, pajak, dan SPJ akan dikoreksi.'))return;
+if(editId===id)resetForm();st.tx=st.tx.filter(x=>x.id!==id);render()}
+function goKas(z){$('q').value='';$('fc').value='';$('fb').value='';$('fs').value=z;render();$('bk').scrollIntoView({behavior:'smooth',block:'start'})}
+q.oninput=fc.onchange=fb.onchange=fs.onchange=render;
+ex.onclick=()=>{const c='Tanggal,Uraian,Jenis,Mekanisme,Jumlah,Pajak,SPJ lengkap,Pajak disetor\n'+view().map(t=>[t.d,'"'+t.u.replace(/"/g,'""')+'"',t.k,t.m,Math.round(t.j),Math.round(t.p),t.m==='LS'?'-':(t.spj?'Ya':'Belum'),t.p?(t.tor?'Ya':'Belum'):'-'].join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+c);a.download='transaksi'+(fb.value?'-'+fb.value:'')+'.csv';a.click()};
 th.onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0f141b';r.dataset.theme=dk?'light':'dark'};
 const esc=t=>t.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 function sync(){[1,2,3].forEach(i=>{const n=document.getElementById('n'+i).value||'(................................)',p=document.getElementById('p'+i).value||'................';document.getElementById('o'+i).innerHTML='<u><b>'+esc(n)+'</b></u><br>NIP. '+esc(p)});
@@ -181,20 +205,23 @@ document.getElementById('tg').value=new Date().toISOString().slice(0,10);sync();
 const set=u=>{li.src=u||'';li.hidden=!u;lp.hidden=!!u;lx.hidden=!u;lg.classList.toggle('has',!!u)};
 lg.onclick=()=>{if(!li.src||li.hidden)lf.click()};document.getElementById('lb').onclick=()=>lf.click();lx.onclick=()=>{set('');lf.value=''};
 lf.onchange=()=>{const f=lf.files[0];if(!f)return;if(f.size>2*1024*1024){alert('Ukuran logo maksimal 2 MB.');return}const r=new FileReader();r.onload=()=>set(r.result);r.readAsDataURL(f)}})();
-const PAGU0=cats.map(c=>c.pagu),NOW0=NOW,KET0=st.ket,BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-const $=id=>document.getElementById(id),num=v=>+String(v).replace(/\D/g,'')||0,fmt=n=>n?n.toLocaleString('id-ID'):'';
+const PAGU0=cats.map(c=>c.pagu),UP0=st.up,NOW0=NOW,KET0=st.ket,BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const num=v=>+String(v).replace(/\D/g,'')||0,fmt=n=>n?n.toLocaleString('id-ID'):'';
 $('pbl').innerHTML=BLN.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
 const rd=()=>cats.map((c,i)=>num($('pg'+i).value));
-function pTot(){const v=rd(),bad=cats.filter((c,i)=>v[i]<c.real).map(c=>c.n);
-cats.forEach((c,i)=>$('pn'+i).innerHTML='Realisasi Buku Kas '+R(c.real)+' • '+(v[i]>=c.real?'sisa '+R(v[i]-c.real):'<span class="warn">kurang '+R(c.real-v[i])+'</span>'));
+function pTot(){const v=rd(),bad=cats.filter((c,i)=>v[i]<c.real).map(c=>c.n),kt=num($('pup').value)-(st.up-st.kas);
+cats.forEach((c,i)=>{$('pg'+i).classList.toggle('bad',v[i]<c.real);$('pn'+i).innerHTML='Realisasi Buku Kas '+R(c.real)+' • '+(v[i]>=c.real?'sisa '+R(v[i]-c.real):'<span class="warn">terlampaui '+R(c.real-v[i])+'</span>')});
+$('pnu').innerHTML='Saldo kas '+(kt>=0?R(kt):'<span class="warn">'+R(kt)+'</span>');
 $('ptot').innerHTML='Total pagu: <b>'+R(v.reduce((x,y)=>x+y,0))+'</b>'+(bad.length?' • <span class="warn">di bawah realisasi: '+bad.join(', ')+'</span>':'')}
-function fillPagu(){cats.forEach((c,i)=>$('pg'+i).value=fmt(c.pagu));$('pbl').value=NOW;$('pks').value=st.ket;pTot()}
+function fillPagu(){cats.forEach((c,i)=>$('pg'+i).value=fmt(c.pagu));$('pup').value=fmt(st.up);$('pbl').value=NOW;$('pks').value=st.ket;pTot()}
 function editPagu(){$('pgcard').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('pg0').focus(),350)}
-cats.forEach((c,i)=>$('pg'+i).oninput=e=>{e.target.value=fmt(num(e.target.value));pTot()});
-$('pf').onsubmit=e=>{e.preventDefault();const v=rd(),m=$('pmsg'),b=cats.findIndex((c,i)=>v[i]<c.real);
-if(b>=0){m.className='note warn';m.textContent='Pagu '+cats[b].n+' tidak boleh lebih kecil dari realisasinya ('+R(cats[b].real)+').';return}
-cats.forEach((c,i)=>c.pagu=v[i]);NOW=+$('pbl').value;st.ket=$('pks').value;render();m.className='note';m.textContent='✔ Pagu diperbarui. Semua angka sudah mengikuti.'};
-$('prs').onclick=()=>{cats.forEach((c,i)=>c.pagu=PAGU0[i]);NOW=NOW0;st.ket=KET0;render();fillPagu();$('pmsg').textContent=''};
+function editUP(){$('pgcard').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>$('pup').focus(),350)}
+const clr=()=>{$('pmsg').textContent='';$('pmsg').className='note'};
+[...cats.map((c,i)=>'pg'+i),'pup'].forEach(id=>$(id).oninput=e=>{e.target.value=fmt(num(e.target.value));clr();pTot()});
+$('pf').onsubmit=e=>{e.preventDefault();const v=rd(),m=$('pmsg');cats.forEach((c,i)=>c.pagu=v[i]);st.up=num($('pup').value);NOW=+$('pbl').value;st.ket=$('pks').value;render();
+const bad=cats.filter(c=>c.pagu<c.real);
+if(bad.length){m.className='callout';m.textContent='⚠ Diterapkan, tetapi '+bad.map(c=>c.n).join(', ')+' di bawah realisasi: sisanya negatif dan ditandai merah.'}else{m.className='note';m.textContent='✔ Diterapkan. Semua angka sudah mengikuti.'}};
+$('prs').onclick=()=>{cats.forEach((c,i)=>c.pagu=PAGU0[i]);st.up=UP0;NOW=NOW0;st.ket=KET0;render();fillPagu();clr()};
 fillPagu();
 fd.value=new Date().toISOString().slice(0,10);render();
 </script>
